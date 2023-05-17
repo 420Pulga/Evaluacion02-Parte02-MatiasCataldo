@@ -1,0 +1,66 @@
+import urllib.parse
+import requests
+
+api_matiascataldo= "https://www.mapquestapi.com/directions/v2/route?"
+
+key_matiascataldo="INstyyuFC3x39l62UeUT8OJC1ayFJFI1"
+citycar=float(20)
+sedan=float(15)
+suv=float(12)
+
+while True:
+    origen_matiascataldo=input("dirección de origen(q o quit para salir): ")
+    if origen_matiascataldo== "quit" or origen_matiascataldo == "q"or origen_matiascataldo == "salir"or origen_matiascataldo == "ok"or origen_matiascataldo == "OK":
+        break
+    dest_matiascataldo=input("dirección de destino(q o quit para salir): ")
+    if dest_matiascataldo=="quit"or dest_matiascataldo=="q"or dest_matiascataldo == "salir"or dest_matiascataldo == "ok"or dest_matiascataldo == "OK":
+        break
+    url = api_matiascataldo + urllib.parse.urlencode({"key":key_matiascataldo, "from":origen_matiascataldo, "to":dest_matiascataldo})
+    json_data= requests.get(url).json()
+    print("URL: " + (url))
+
+    json_data = requests.get(url).json()
+    json_status = json_data["info"]["statuscode"]
+
+    if json_status == 0:
+        print("API Status: " + str(json_status) + " = A successful route call.\n")
+        print("=============================================")
+        print("Direccion de origen: " + (origen_matiascataldo) + ", destino: " + (dest_matiascataldo))
+        print("Duracion del viaje: " + (json_data["route"]["formattedTime"]))
+        millas=json_data["route"]["distance"]
+        kilometros= millas * 1.60934
+        ccc=kilometros/citycar
+        csedan=kilometros/sedan
+        csuv=kilometros/suv
+        print("Distancia de viaje:",kilometros,"[Km]")
+        bencina=int(1360)
+        while True:
+            auto=input("Ingrese el tipo de vehículo (City Car, Sedan o SUV, puede ingresar 1,2 o 3 respectivamente): ")
+            
+            if auto == str(1) or auto == "City Car" or auto == "city car" or auto== "City car" or auto== "city Car":
+                print("Consumo de combustible de vehículo City Car: ",round(ccc,2),"Litros y con un costo de $",round(bencina*ccc,2),"CLP en bencina")
+                print("=======================================================")
+                for each in json_data["route"]["legs"][0]["maneuvers"]:
+                    print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+                b=input("ingrese una tecla para elegir otro vehículo, x para salir: ")
+                if b == "x":
+                    break
+            if auto == str(2) or auto == "Sedan" or auto == "sedan":   
+                print("Consumo de combustible de vehículo Sedan: ",round(csedan,2),"Litros y con un costo de $",round(bencina*csedan,2),"CLP en bencina")
+                print("=======================================================")
+                for each in json_data["route"]["legs"][0]["maneuvers"]:
+                    print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+                b=input("ingrese una tecla para elegir otro vehículo, x para salir: ")
+                if b == "x" or b=="X":
+                    break
+            if auto == str(3) or auto == "suv" or auto== "Suv" or auto == "SUV":
+                print("Consumo de combustible de vehículo SUV: ",round(csuv,2),"Litros y con un costo de $",round(bencina*csuv,2),"CLP en bencina")
+                print("=======================================================")
+                for each in json_data["route"]["legs"][0]["maneuvers"]:
+                    print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+                b=input("ingrese una tecla para elegir otro vehículo, x para salir: ")
+                if b == "x" or b=="X":
+                    break
+            print("=============================================")
+        
+    print("=============================================\n")
